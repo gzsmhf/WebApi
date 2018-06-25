@@ -44,6 +44,7 @@ namespace WebApi.Providers
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             // 资源所有者密码凭据未提供客户端 ID。
+            context.Validated();
             //return Task.FromResult<object>(null);
             await base.ValidateClientAuthentication(context);
         }
