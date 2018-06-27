@@ -18,15 +18,11 @@ namespace WebApi.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-
-            //调用后台的登录服务验证用户名与密码  
-            if (context.UserName != "Admin" || context.Password != "123456")
+            if(context.UserName != "Ausmate" || context.Password != "Home1234")
             {
-                context.SetError("invalid_grant", "用户名或密码不正确。");
+                context.SetError("invalid_grant", "用户名或密码不正确");
                 return;
             }
-
             var oAuthIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
             oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
             var ticket = new AuthenticationTicket(oAuthIdentity, new AuthenticationProperties());
@@ -49,8 +45,8 @@ namespace WebApi.Providers
         {
             // 资源所有者密码凭据未提供客户端 ID。
             context.Validated();
-            await base.ValidateClientAuthentication(context);
             //return Task.FromResult<object>(null);
+            await base.ValidateClientAuthentication(context);
         }
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
@@ -69,27 +65,9 @@ namespace WebApi.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "userName", userName },
+                { "userName", userName }
             };
             return new AuthenticationProperties(data);
-        }
-
-        public override Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
-        {
-            // Change auth ticket for refresh token requests
-            var newIdentity = new ClaimsIdentity(context.Ticket.Identity);
-
-            var newClaim = newIdentity.Claims.Where(c => c.Type == "newClaim").FirstOrDefault();
-            if (newClaim != null)
-            {
-                newIdentity.RemoveClaim(newClaim);
-            }
-            newIdentity.AddClaim(new Claim("newClaim", "refreshToken"));
-
-            var newTicket = new AuthenticationTicket(newIdentity, context.Ticket.Properties);
-            context.Validated(newTicket);
-
-            return Task.FromResult<object>(null);
         }
     }
 }
