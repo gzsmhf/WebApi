@@ -15,7 +15,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(string action)
+        public ActionResult OnClick(string action)
         {
             if(action == "Login")
             {
